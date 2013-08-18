@@ -1,8 +1,8 @@
-## pyJoJo
+# pyJoJo
 
 Expose a directory of bash scripts as an API.
 
-### Tutorial
+## Tutorial
 
 Create a directory to store the bash scripts, by default pyJoJo will be pointed at /srv/jojo.
 
@@ -31,7 +31,7 @@ You should see this as a response:
 
     [TODO: add response]
 
-### API
+## API
 
 ### JoJo Block Markup
 
@@ -54,29 +54,55 @@ Fields:
   - **lock**: if true, only one instance of the script will be allowed to run
     - format: lock: True|False
     
-#### Script List
+### Script List
 
 Returns information about all the scripts.
 
     GET /scripts
 
-#### Get Information about a Script
+### Get Information about a Script
 
 Returns information about the specified script.
 
     GET /scripts/{script_name}
 
-#### Run a Script
+### Run a Script
 
 Executes the specified script and returns the results.
 
     POST /scripts/{script_name}
 
-#### Reload the script directories
+### Reload the script directories
 
 Reloads the scripts in the script directory.
 
     POST /reload
 
-### Developer Setup
+## Development Setup
+
+### Setup Virtualenv
+        
+Install pip, virtualenv, and paver:
+
+    sudo easy_install pip
+    sudo pip install virtualenv paver
+
+### Setup the Application
+
+Clone the application:
+
+    cd /path/to/workspace
+    git clone [git path] [dir]
+    cd [dir]
+    paver create_virtualenv
+
+To activate your virtualenv and run the service:
+  
+    cd /path/to/workspace/[dir]
+    source bin/activate
+    ebil -d
+
+To deactivate the virtualenv:
+
+    deactivate
 
