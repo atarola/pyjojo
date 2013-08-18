@@ -1,0 +1,12 @@
+# generic
+*.py[co]
+
+# virtualenv
+/.Python
+/bin
+/bootstrap.py
+/*.egg-info
+/include
+/lib
+/build
+/dist
