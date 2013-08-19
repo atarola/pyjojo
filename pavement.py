@@ -3,20 +3,24 @@
 import sys
 from os.path import dirname
 
-import paver.doctools
-from paver.easy import options
-from paver.setuputils import setup, find_packages
-
 # make sure the current directory is in the python import path
 sys.path.append(dirname(__file__))
 
-# default task options
-options(root_dir=dirname(__file__))
+try:
+    import paver.doctools
+    from paver.easy import options
+    
+    # default task options
+    options(root_dir=dirname(__file__))
 
-# import our tasks
-from task.tests import *
-from task.virtualenv import *
-from task.deploy import *
+    # import our tasks
+    from task.tests import *
+    from task.virtualenv import *
+    from task.deploy import *
+except:
+    pass
+
+from paver.setuputils import setup, find_packages
 
 #
 # project dependencies
@@ -45,7 +49,7 @@ setup(
     url="https://github.com/atarola/pyjojo",
     
     # packaging info
-    packages=find_packages(exclude=['test', 'test.*', 'task', 'task.*', 'pavement.py']),
+    packages=find_packages(exclude=['test', 'test.*', 'task', 'task.*']),
     install_requires=install_requires,
     
     entry_points={

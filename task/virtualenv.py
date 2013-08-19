@@ -21,7 +21,7 @@ def destroy_virtualenv(options):
         if os.path.exists(os.path.join(options.root_dir, d)):
             shutil.rmtree(d)
 
-    for f in ['bootstrap.py', '.Python']:
+    for f in ['bootstrap.py', '.Python', 'paver-minilib.zip', 'setup.py']:
         if os.path.exists(os.path.join(options.root_dir, f)):
             os.remove(f)
 
