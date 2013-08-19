@@ -20,7 +20,7 @@ In /srv/jojo/echo.sh:
     
     echo $TEXT
 
-Make sure this script is both readable and executable by the user pyJoJo is running under.  It will be executed as a bash script, so if you'd like to execute scripts in other languages, make sure you have a valid shebang line in it.
+Make sure this script is both readable and executable by the user pyJoJo is running under.  Scripts will be executed through the shell, so make sure you have a valid shebang line.
 
 Now, start up pyJoJo and hit it with curl:
 
