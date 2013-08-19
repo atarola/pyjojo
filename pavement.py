@@ -22,7 +22,6 @@ from task.virtualenv import *
 #
 
 install_requires = [
-    'coverage==3.6',
     'pyyaml==3.10',
     'setuptools==0.6c11',
     'tornado==3.0.1',
@@ -36,14 +35,16 @@ install_requires = [
 #
 
 setup(
+    # metadata
     name="pyjojo",
     version="0.1",
+    author="Anthony Tarola",
+    author_email="anthony.tarola@gmail.com",
+    description="Expose a set of shell scripts as an API.",
+    url="https://github.com/atarola/pyjojo",
     
-    # packaging infos
-    package_data={'': []},
-    packages=find_packages(exclude=['test', 'test.*', 'task', 'task.*']),
-    
-    # dependency infos
+    # packaging info
+    packages=find_packages(exclude=['test', 'test.*', 'task', 'task.*', 'pavement.py']),
     install_requires=install_requires,
     
     entry_points={

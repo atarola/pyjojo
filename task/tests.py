@@ -97,6 +97,7 @@ def run_coverage(report_method, **kwargs):
 def install_dependencies(setup):
     from setuptools import dist
     distribution = dist.Distribution(attrs=setup)
+    setup.install_requires.append('coverage==3.6')
     distribution.fetch_build_eggs(setup.install_requires)
 
 
