@@ -16,6 +16,7 @@ options(root_dir=dirname(__file__))
 # import our tasks
 from task.tests import *
 from task.virtualenv import *
+from task.deploy import *
 
 #
 # project dependencies

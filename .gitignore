@@ -10,3 +10,7 @@
 /lib
 /build
 /dist
+
+# deployment
+/setup.py
+/paver-minilib.zip
