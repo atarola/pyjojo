@@ -8,6 +8,7 @@
 /*.egg-info
 /include
 /lib
+/lib64
 /build
 /dist
 
