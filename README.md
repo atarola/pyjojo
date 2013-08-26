@@ -4,11 +4,11 @@ Expose a directory of bash scripts as an API.
 
 ## Tutorial
 
-Create a directory to store the bash scripts, by default pyJoJo will be pointed at /srv/jojo.
+Create a directory to store the bash scripts, by default pyJoJo will be pointed at /srv/pyjojo.
 
 Next, add a file to the directory as a test script.
 
-In /srv/jojo/echo.sh:
+In /srv/pyjojo/echo.sh:
 
     #!/bin/bash
     
@@ -24,8 +24,8 @@ Make sure this script is both readable and executable by the user pyJoJo is runn
 
 Now, start up pyJoJo and hit it with curl:
 
-    pyjojo -d --dir /srv/jojo
-    curl -k -XPOST http://localhost:3000/script/echo -d'{"text": "hello world!"}'
+    pyjojo -d --dir /srv/pyjojo
+    curl -XPOST http://localhost:3000/scripts/echo -d'{"text": "hello world!"}'
 
 You should see this as a response:
 
@@ -100,7 +100,7 @@ To activate your virtualenv and run the service:
   
     cd /path/to/workspace/[dir]
     source bin/activate
-    ebil -d
+    pyjojo -d
 
 To deactivate the virtualenv:
 
