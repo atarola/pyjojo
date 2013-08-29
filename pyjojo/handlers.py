@@ -26,6 +26,8 @@ class BaseHandler(RequestHandler):
                 return
 
             self.params = json.loads(self.request.body)
+        else:
+            # we only handle
 
     def write(self, chunk):
         if isinstance(chunk, dict):

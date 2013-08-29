@@ -47,7 +47,7 @@ class route(object):
 def command_line_options():
     """ command line configuration """
     
-    parser = OptionParser(usage="usage: %prog [options] <config_file>")
+    parser = OptionParser(usage="usage: %prog [options] <>")
 
     parser.add_option('-d', '--debug', action="store_true", dest="debug", default=False,
                       help="Start the application in debugging mode.")
@@ -61,15 +61,34 @@ def command_line_options():
     parser.add_option('--dir', action="store", dest="directory", default="/srv/pyjojo",
                       help="sqlalchemy url for database")
 
+    parser.add_option('-c', '--certfile', action="store", dest="certfile", default=None,
+                      help="SSL Certificate File")
+    
+    parser.add_option('-k', '--keyfile', action="store", dest="keyfile", default=None,
+                      help="SSL Private Key File")
+
     options, args = parser.parse_args()
 
     if len(args) >= 1:
-        config.load_file(args[0])
+        config['passwords'] = parse_password_file(args[0])
+    else:
+        config['passwords'] = None
         
-    config['directory'] = options.directory
+    config['directory'] = options.director
 
     return options
     
+
+def parse_password_file(file_name):
+    """ parse the apache password file into usernames and passwords """
+    passwords = {}
+    
+    for line in open(file_name, 'r'):
+        username, password = line.split(':')
+        passwords[username] = password
+    
+    return passwords
+
 
 def setup_logging():
     """ setup the logging system """
@@ -91,20 +110,33 @@ def main():
     options = command_line_options()
     handler = setup_logging()
 
+    # import the handler file, this will fill out the route.get_routes() call.
+    import pyjojo.handlers
+
     # setup the application
     log.info("Setting up the application")
     
-    # import the handler file.  this will fill out the route object.
-    import pyjojo.handlers
-    
     application = tornado.web.Application(
-            route.get_routes(), 
-            debug=options.debug
-        )
+        route.get_routes(), 
+        scripts=create_collection(config['directory']),
+        debug=options.debug
+    )
     
-    application.listen(options.port, options.address)
-    application.settings['scripts'] = create_collection(config['directory'])
+    # if we're passed a certfile and keyfile, start the app as an HTTPS server, 
+    # otherwise use HTTP. 
+    if options.certfile and options.keyfile:        
+        server = HTTPServer(application, ssl_options={
+            "certfile": config['ssl']['certfile'],
+            "keyfile": config['ssl']['keyfile']
+        })
+    else:
+        log.warn("Application is running in HTTP mode, this is insecure.  Pass in the --certfile and --keyfile to use SSL.")
+        server = HTTPServer(application)
 
+    # set the server port and fork subprocesses to run
+    server.bind(options.port, options.address)
+    server.start(1)
+    
     # start the ioloop
     log.info("Starting the IOLoop")
     IOLoop.instance().start()
