@@ -27,7 +27,8 @@ class BaseHandler(RequestHandler):
 
             self.params = json.loads(self.request.body)
         else:
-            # we only handle
+            # we only handle json, and say so
+            raise HTTPError(400, "This applicaiton only support json, please set your Content-Type header to application/json.")
 
     def write(self, chunk):
         if isinstance(chunk, dict):
