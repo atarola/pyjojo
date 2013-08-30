@@ -13,6 +13,7 @@ import tornado.web
 from tornado.ioloop import IOLoop
 from tornado.httpserver import HTTPServer
 
+from pyjojo.config import config
 from pyjojo.scripts import create_collection
 
 log = logging.getLogger(__name__)

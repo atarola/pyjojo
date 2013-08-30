@@ -29,7 +29,7 @@ class BaseHandler(RequestHandler):
         
         self.params = {}
         content_type = self.request.headers.get("Content-Type", 'application/json')
-    
+            
         if content_type.startswith("application/json"):
             if self.request.body in [None, ""]:
                 return
@@ -37,7 +37,7 @@ class BaseHandler(RequestHandler):
             self.params = json.loads(self.request.body)
         else:
             # we only handle json, and say so
-            raise HTTPError(400, "This applicaiton only support json, please set your Content-Type header to application/json.")
+            raise HTTPError(400, "This application only support json, please set the http header Content-Type to application/json")
 
     def handle_auth(self):
         """ authenticate the user """
@@ -124,7 +124,7 @@ class ScriptDetailsHandler(BaseHandler):
     @gen.engine
     def post(self, script_name):
         """ run the script """
-        
+                
         script = self.get_script(script_name)
         retcode, stdout, stderr = yield gen.Task(script.execute, self.params)
         
