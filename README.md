@@ -35,6 +35,33 @@ You should see this as a response:
       "stdout": "echo'd text: hello world!\n"
     }
 
+## Usage
+
+    Usage: pyjojo [options] <htpasswd>
+
+    Expose a directory of bash scripts as an API.
+
+    Note: This application gives you plenty of bullets to shoot yourself in the 
+    foot!  Please use the SSH config options, give a password file, and either 
+    whitelist access to it via a firewall or keep it in a private network.
+
+    You can use the apache htpasswd utility to create your htpasswd files.  If
+    you do, I recommend passing the -d flag, forcing the encryption type pyjojo
+    recognises.
+
+    Options:
+      -h, --help            show this help message and exit
+      -d, --debug           Start the application in debugging mode.
+      -p PORT, --port=PORT  Set the port to listen to on startup.
+      -a ADDRESS, --address=ADDRESS
+                            Set the address to listen to on startup. Can be a
+                            hostname or an IPv4/v6 address.
+      --dir=DIRECTORY       Base directory to parse the scripts out of
+      -c CERTFILE, --certfile=CERTFILE
+                            SSL Certificate File
+      -k KEYFILE, --keyfile=KEYFILE
+                            SSL Private Key File
+
 ## API
 
 ### JoJo Block Markup

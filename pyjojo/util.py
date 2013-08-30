@@ -4,7 +4,7 @@ import os
 import pkgutil
 import logging
 import sys
-from optparse import OptionParser
+from optparse import OptionParser, IndentedHelpFormatter
 from pkg_resources import resource_filename
 
 import tornado.web
@@ -45,11 +45,30 @@ class route(object):
         return self._routes
 
 
+class PlainHelpFormatter(IndentedHelpFormatter): 
+    def format_description(self, description):
+        if description:
+            return description + "\n"
+        else:
+            return ""
+
+
 def command_line_options():
     """ command line configuration """
     
     parser = OptionParser(usage="usage: %prog [options] <htpasswd>")
-        
+    
+    parser.formatter = PlainHelpFormatter()
+    parser.description = """Expose a directory of bash scripts as an API.
+
+Note: This application gives you plenty of bullets to shoot yourself in the 
+foot!  Please use the SSH config options, give a password file, and either 
+whitelist access to it via a firewall or keep it in a private network.
+
+You can use the apache htpasswd utility to create your htpasswd files.  If
+you do, I recommend passing the -d flag, forcing the encryption type pyjojo
+recognises."""
+    
     parser.add_option('-d', '--debug', action="store_true", dest="debug", default=False,
                       help="Start the application in debugging mode.")
     
@@ -60,7 +79,7 @@ def command_line_options():
                       help="Set the address to listen to on startup. Can be a hostname or an IPv4/v6 address.")
     
     parser.add_option('--dir', action="store", dest="directory", default="/srv/pyjojo",
-                      help="sqlalchemy url for database")
+                      help="Base directory to parse the scripts out of")
     
     parser.add_option('-c', '--certfile', action="store", dest="certfile", default=None,
                       help="SSL Certificate File")
