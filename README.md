@@ -11,25 +11,29 @@ Next, add a file to the directory as a test script.
 In /srv/pyjojo/echo.sh:
 
     #!/bin/bash
-    
+
     # -- jojo --
-    # description: echo script
-    # param: text - text to echo back
-    # lock: false
-    # -- jojo -- 
-    
-    echo $TEXT
+    # description: echo text on the command line
+    # param: text - text to echo
+    # -- jojo --
+
+    echo "echo'd text: $TEXT"
+    exit 0
 
 Make sure this script is both readable and executable by the user pyJoJo is running under.  Scripts will be executed through the shell, so make sure you have a valid shebang line.
 
 Now, start up pyJoJo and hit it with curl:
 
     pyjojo -d --dir /srv/pyjojo
-    curl -XPOST http://localhost:3000/scripts/echo -d'{"text": "hello world!"}'
+    curl -XPOST http://localhost:3000/scripts/echo -H "Content-Type: application/json" -d '{"text": "hello world!"}'
 
 You should see this as a response:
 
-    [TODO: add response]
+    {
+      "retcode": 0, 
+      "stderr": "", 
+      "stdout": "echo'd text: hello world!\n"
+    }
 
 ## API
 
