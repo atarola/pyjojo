@@ -108,32 +108,3 @@ Executes the specified script and returns the results.
 Reloads the scripts in the script directory.
 
     POST /reload
-
-## Development Setup
-
-### Setup Virtualenv
-        
-Install pip, virtualenv, and paver:
-
-    sudo easy_install pip
-    sudo pip install virtualenv paver
-
-### Setup the Application
-
-Clone the application:
-
-    cd /path/to/workspace
-    git clone [git path] [dir]
-    cd [dir]
-    paver create_virtualenv
-
-To activate your virtualenv and run the service:
-  
-    cd /path/to/workspace/[dir]
-    source bin/activate
-    pyjojo -d
-
-To deactivate the virtualenv:
-
-    deactivate
-
