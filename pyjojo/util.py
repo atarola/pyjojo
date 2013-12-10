@@ -62,7 +62,7 @@ def command_line_options():
     parser.description = """Expose a directory of bash scripts as an API.
 
 Note: This application gives you plenty of bullets to shoot yourself in the 
-foot!  Please use the SSH config options, give a password file, and either 
+foot!  Please use the SSL config options, give a password file, and either 
 whitelist access to it via a firewall or keep it in a private network.
 
 You can use the apache htpasswd utility to create your htpasswd files.  If
