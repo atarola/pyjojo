@@ -42,7 +42,7 @@ You should see this as a response:
     Expose a directory of bash scripts as an API.
 
     Note: This application gives you plenty of bullets to shoot yourself in the 
-    foot!  Please use the SSH config options, give a password file, and either 
+    foot!  Please use the SSL config options, give a password file, and either 
     whitelist access to it via a firewall or keep it in a private network.
 
     You can use the apache htpasswd utility to create your htpasswd files.  If
@@ -73,6 +73,9 @@ Example block:
     # -- jojo --
     # description: echo script
     # param: text - text to echo back
+    # param: secret1 - sensitive text you don't want logged
+    # param: secret2 - more sensitive stuff
+    # filtered_params: secret1, secret2
     # lock: false
     # -- jojo -- 
 
@@ -80,8 +83,10 @@ Fields:
 
   - **description**: information about what a script does
     - format: description: [*text*]
-  - **param**: specifies a parameter to the script, will be passed in as environment params, with the name in all caps.
+  - **param**: specifies a parameter to the script, will be passed in as environment params, with the name in all caps.  One per line.
     - format: param: *name* [- *description*]
+  - **filtered_params**: specifies a list of parameters that you have already specified, but want to ensure that the values are not logged.
+    - format: filtered_params: item1 [,item2]
   - **lock**: if true, only one instance of the script will be allowed to run
     - format: lock: True|False
     

@@ -33,17 +33,25 @@ class ScriptCollection(dict):
 class Script(object):
     """ a single script in the directory """
     
-    def __init__(self, filename, name, description, params, needs_lock):
+    def __init__(self, filename, name, description, params, filtered_params, needs_lock):
         self.lock = toro.Lock()
         self.filename = filename
         self.name = name
         self.description = description
         self.params = params
+        self.filtered_params = filtered_params
         self.needs_lock = needs_lock
+
+    def filter_params(self, params):
+        filtered_params = dict(params)
+        for k,v in filtered_params.items():
+            if k in self.filtered_params:
+                filtered_params[k] = 'FILTERED'
+        return filtered_params
 
     @gen.engine
     def execute(self, params, callback):
-        log.info("Executing script: {0} with params: {1}".format(self.filename, params))
+        log.info("Executing script: {0} with params: {1}".format(self.filename, self.filter_params(params)))
         
         if self.needs_lock:
             with (yield gen.Task(self.lock.aquire)):
@@ -89,12 +97,12 @@ class Script(object):
             "name": self.name,
             "description": self.description,
             "params": self.params,
+            "filtered_params": self.filtered_params,
             "lock": self.needs_lock
         }
         
     def __repr__(self):
         return "<{0} {1}>".format(self.__class__.__name__, self.metadata())
-
 
 def create_collection(directory):
     """ create the script collection for the directory """
@@ -129,6 +137,7 @@ def create_script(script_name, filename):
     # script defaults
     description = None
     params = []
+    filtered_params = []
     lock = False
     
     # warn the user if we can't execute this file
@@ -184,6 +193,16 @@ def create_script(script_name, filename):
             
             params.append({'name': value})
             continue
+
+        # filtered_params
+        if in_block and key == "filtered_params":
+            filter_values = [filter_value.strip() for filter_value in value.split(',')]
+            if len(filter_values) > 1:
+                for filter_value in filter_values:
+                    filtered_params.append(filter_value)
+                continue
+
+            filtered_params.append(value)
         
         # lock
         if in_block and key == "lock":
@@ -197,4 +216,4 @@ def create_script(script_name, filename):
         log.error("file with filename {0} is missing an end block, Ignoring".format(filename))
         return None
     
-    return Script(filename, script_name, description, params, lock)
+    return Script(filename, script_name, description, params, filtered_params, lock)
