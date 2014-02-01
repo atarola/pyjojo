@@ -78,6 +78,9 @@ recognises."""
     parser.add_option('-a', '--address', action ="store", dest="address", default=None,
                       help="Set the address to listen to on startup. Can be a hostname or an IPv4/v6 address.")
     
+    parser.add_option('-u', '--unix-socket', action="store", dest="unix_socket", default=None,
+                      help="Bind pyjojo to a unix domain socket, will ignore any ssh directives")
+    
     parser.add_option('--dir', action="store", dest="directory", default="/srv/pyjojo",
                       help="Base directory to parse the scripts out of")
     
@@ -143,20 +146,31 @@ def main():
         debug=options.debug
     )
     
-    # if we're passed a certfile and keyfile, start the app as an HTTPS server, 
-    # otherwise use HTTP. 
-    if options.certfile and options.keyfile:        
+    # unix domain socket
+    if options.unix_socket:
+        log.info("Binding application to unix socket {0}".format(options.unix_socket))
+        server = HTTPServer(application)
+        socket = bind_unix_socket(options.unix_socket)
+        server.add_socket(socket)
+        server.start(1)
+
+    # https server
+    elif options.certfile and options.keyfile:
+        log.info("Binding application to unix socket {0}".format(options.unix_socket))
         server = HTTPServer(application, ssl_options={
             "certfile": options.certfile,
             "keyfile": options.keyfile
         })
+        
+        server.bind(options.port, options.address)
+        server.start(1)
+
+    # http server
     else:
         log.warn("Application is running in HTTP mode, this is insecure.  Pass in the --certfile and --keyfile to use SSL.")
         server = HTTPServer(application)
-
-    # set the server port and fork subprocesses to run
-    server.bind(options.port, options.address)
-    server.start(1)
+        server.bind(options.port, options.address)
+        server.start(1)
     
     # start the ioloop
     log.info("Starting the IOLoop")
