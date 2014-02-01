@@ -7,11 +7,11 @@ import sys
 from optparse import OptionParser, IndentedHelpFormatter
 from pkg_resources import resource_filename
 
-import tornado.web
 import tornado.httpserver
 import tornado.web
 from tornado.ioloop import IOLoop
 from tornado.httpserver import HTTPServer
+from tornado.netutil import bind_unix_socket
 
 from pyjojo.config import config
 from pyjojo.scripts import create_collection
@@ -152,7 +152,6 @@ def main():
         server = HTTPServer(application)
         socket = bind_unix_socket(options.unix_socket)
         server.add_socket(socket)
-        server.start(1)
 
     # https server
     elif options.certfile and options.keyfile:
@@ -161,16 +160,15 @@ def main():
             "certfile": options.certfile,
             "keyfile": options.keyfile
         })
-        
         server.bind(options.port, options.address)
-        server.start(1)
+        server.start()
 
     # http server
     else:
         log.warn("Application is running in HTTP mode, this is insecure.  Pass in the --certfile and --keyfile to use SSL.")
         server = HTTPServer(application)
         server.bind(options.port, options.address)
-        server.start(1)
+        server.start()
     
     # start the ioloop
     log.info("Starting the IOLoop")
