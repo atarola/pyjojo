@@ -10,7 +10,8 @@ install_requires = [
     'pyyaml==3.10',
     'setuptools==0.6c11',
     'tornado==3.0.1',
-    'toro==0.5'
+    'toro==0.5',
+    'passlib==1.6'
 ]
 
 #

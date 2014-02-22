@@ -7,6 +7,7 @@ import sys
 from optparse import OptionParser, IndentedHelpFormatter
 from pkg_resources import resource_filename
 
+import passlib
 import tornado.web
 import tornado.httpserver
 import tornado.web
@@ -91,24 +92,13 @@ recognises."""
 
     # TODO: only do this if they specify the ssl certfile and keyfile
     if len(args) >= 1:
-        config['passwords'] = parse_password_file(args[0])
+        config['passfile'] = args[0]
     else:
-        config['passwords'] = None
+        config['passfile'] = None
         
     config['directory'] = options.directory
 
     return options
-    
-
-def parse_password_file(file_name):
-    """ parse the apache password file into usernames and passwords """
-    passwords = {}
-    
-    for line in open(file_name, 'r'):
-        username, password = line.split(':')
-        passwords[username] = password.strip()
-    
-    return passwords
 
 
 def setup_logging():
