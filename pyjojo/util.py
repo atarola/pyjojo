@@ -9,10 +9,9 @@ from pkg_resources import resource_filename
 
 import passlib
 import tornado.web
-import tornado.httpserver
-import tornado.web
 from tornado.ioloop import IOLoop
 from tornado.httpserver import HTTPServer
+from tornado.netutil import bind_unix_socket
 
 from pyjojo.config import config
 from pyjojo.scripts import create_collection
@@ -73,20 +72,23 @@ recognises."""
     parser.add_option('-d', '--debug', action="store_true", dest="debug", default=False,
                       help="Start the application in debugging mode.")
     
+    parser.add_option('--dir', action="store", dest="directory", default="/srv/pyjojo",
+                      help="Base directory to parse the scripts out of")
+    
     parser.add_option('-p', '--port', action="store", dest="port", default=3000,
                       help="Set the port to listen to on startup.")
     
     parser.add_option('-a', '--address', action ="store", dest="address", default=None,
                       help="Set the address to listen to on startup. Can be a hostname or an IPv4/v6 address.")
     
-    parser.add_option('--dir', action="store", dest="directory", default="/srv/pyjojo",
-                      help="Base directory to parse the scripts out of")
-    
     parser.add_option('-c', '--certfile', action="store", dest="certfile", default=None,
                       help="SSL Certificate File")
     
     parser.add_option('-k', '--keyfile', action="store", dest="keyfile", default=None,
                       help="SSL Private Key File")
+    
+    parser.add_option('-u', '--unix-socket', action="store", dest="unix_socket", default=None,
+                      help="Bind pyjojo to a unix domain socket")
 
     options, args = parser.parse_args()
 
@@ -111,6 +113,15 @@ def setup_logging():
     base_log.setLevel(logging.DEBUG)
     return handler
 
+def create_application(debug):
+    application = tornado.web.Application(
+        route.get_routes(), 
+        scripts=create_collection(config['directory']),
+        debug=debug
+    )
+    
+    return application
+
 
 def main():
     """ entry point for the application """
@@ -126,27 +137,31 @@ def main():
 
     # setup the application
     log.info("Setting up the application")
+    application = create_application(options.debug)
     
-    application = tornado.web.Application(
-        route.get_routes(), 
-        scripts=create_collection(config['directory']),
-        debug=options.debug
-    )
-    
-    # if we're passed a certfile and keyfile, start the app as an HTTPS server, 
-    # otherwise use HTTP. 
-    if options.certfile and options.keyfile:        
+    # unix domain socket
+    if options.unix_socket:
+        log.info("Binding application to unix socket {0}".format(options.unix_socket))
+        server = HTTPServer(application)
+        socket = bind_unix_socket(options.unix_socket)
+        server.add_socket(socket)
+
+    # https server
+    elif options.certfile and options.keyfile:
+        log.info("Binding application to unix socket {0}".format(options.unix_socket))
         server = HTTPServer(application, ssl_options={
             "certfile": options.certfile,
             "keyfile": options.keyfile
         })
+        server.bind(options.port, options.address)
+        server.start()
+
+    # http server
     else:
         log.warn("Application is running in HTTP mode, this is insecure.  Pass in the --certfile and --keyfile to use SSL.")
         server = HTTPServer(application)
-
-    # set the server port and fork subprocesses to run
-    server.bind(options.port, options.address)
-    server.start(1)
+        server.bind(options.port, options.address)
+        server.start()
     
     # start the ioloop
     log.info("Starting the IOLoop")
