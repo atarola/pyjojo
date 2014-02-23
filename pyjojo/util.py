@@ -138,7 +138,8 @@ def main():
     if options.certfile and options.keyfile:        
         server = HTTPServer(application, ssl_options={
             "certfile": options.certfile,
-            "keyfile": options.keyfile
+            "keyfile": options.keyfile,
+            "ciphers": "HIGH,MEDIUM"
         })
     else:
         log.warn("Application is running in HTTP mode, this is insecure.  Pass in the --certfile and --keyfile to use SSL.")
