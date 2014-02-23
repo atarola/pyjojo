@@ -7,6 +7,7 @@ import crypt
 import base64
 import difflib
 
+from passlib.apache import HtpasswdFile
 from tornado import gen
 from tornado.web import RequestHandler, HTTPError, asynchronous
 
@@ -43,7 +44,7 @@ class BaseHandler(RequestHandler):
         """ authenticate the user """
         
         # no passwords set, so they're good to go
-        if config['passwords'] == None:
+        if config['passfile'] == None:
             return
         
         # grab the auth header, returning a demand for the auth if needed
@@ -56,17 +57,18 @@ class BaseHandler(RequestHandler):
         auth_decoded = base64.decodestring(auth_header[6:])
         username, password = auth_decoded.split(':', 2)
                 
-        # grab the crypted password, returning a challenge if the user doesn't exist
-        crypted_password = config['passwords'].get(username, None)
-        if crypted_password is None: 
+        if not self.is_user_authenticated(username, password):
             self.auth_challenge()
             return
+    
+    def is_user_authenticated(self, username, password):
+        passfile = HtpasswdFile(config['passfile'])
         
-        # crypt the passed in password with the salt as the hashed password
-        pwhash = crypt.crypt(password, crypted_password)
-        if crypted_password != pwhash:
-            self.auth_challenge()
-            return
+        # is the user in the password file?
+        if not username in passfile.users():
+            return False
+        
+        return passfile.check_password(username, password)
     
     def auth_challenge(self):
         """ return the standard basic auth challenge """

@@ -7,7 +7,7 @@ import sys
 from optparse import OptionParser, IndentedHelpFormatter
 from pkg_resources import resource_filename
 
-import tornado.httpserver
+import passlib
 import tornado.web
 from tornado.ioloop import IOLoop
 from tornado.httpserver import HTTPServer
@@ -94,24 +94,13 @@ recognises."""
 
     # TODO: only do this if they specify the ssl certfile and keyfile
     if len(args) >= 1:
-        config['passwords'] = parse_password_file(args[0])
+        config['passfile'] = args[0]
     else:
-        config['passwords'] = None
+        config['passfile'] = None
         
     config['directory'] = options.directory
 
     return options
-    
-
-def parse_password_file(file_name):
-    """ parse the apache password file into usernames and passwords """
-    passwords = {}
-    
-    for line in open(file_name, 'r'):
-        username, password = line.split(':')
-        passwords[username] = password.strip()
-    
-    return passwords
 
 
 def setup_logging():
@@ -123,6 +112,15 @@ def setup_logging():
     base_log.addHandler(handler)
     base_log.setLevel(logging.DEBUG)
     return handler
+
+def create_application(debug):
+    application = tornado.web.Application(
+        route.get_routes(), 
+        scripts=create_collection(config['directory']),
+        debug=debug
+    )
+    
+    return application
 
 
 def main():
@@ -139,12 +137,7 @@ def main():
 
     # setup the application
     log.info("Setting up the application")
-    
-    application = tornado.web.Application(
-        route.get_routes(), 
-        scripts=create_collection(config['directory']),
-        debug=options.debug
-    )
+    application = create_application(options.debug)
     
     # unix domain socket
     if options.unix_socket:

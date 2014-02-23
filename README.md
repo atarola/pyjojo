@@ -45,9 +45,7 @@ You should see this as a response:
     foot!  Please use the SSL config options, give a password file, and either
     whitelist access to it via a firewall or keep it in a private network.
 
-    You can use the apache htpasswd utility to create your htpasswd files.  If
-    you do, I recommend passing the -d flag, forcing the encryption type pyjojo
-    recognises.
+    You can use the apache htpasswd utility to create your htpasswd files.
 
     Options:
       -h, --help            show this help message and exit
