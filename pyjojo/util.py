@@ -151,7 +151,8 @@ def main():
         log.info("Binding application to unix socket {0}".format(options.unix_socket))
         server = HTTPServer(application, ssl_options={
             "certfile": options.certfile,
-            "keyfile": options.keyfile
+            "keyfile": options.keyfile,
+            "ciphers": "HIGH,MEDIUM"
         })
         server.bind(options.port, options.address)
         server.start()
