@@ -149,11 +149,17 @@ def main():
     # https server
     elif options.certfile and options.keyfile:
         log.info("Binding application to unix socket {0}".format(options.unix_socket))
-        server = HTTPServer(application, ssl_options={
-            "certfile": options.certfile,
-            "keyfile": options.keyfile,
-            "ciphers": "HIGH,MEDIUM"
-        })
+        if sys.version_info < (2,7,0):
+            server = HTTPServer(application, ssl_options={
+                "certfile": options.certfile,
+                "keyfile": options.keyfile
+            })
+        else:
+            server = HTTPServer(application, ssl_options={
+                "certfile": options.certfile,
+                "keyfile": options.keyfile,
+                "ciphers": "HIGH,MEDIUM"
+            })
         server.bind(options.port, options.address)
         server.start()
 
