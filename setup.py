@@ -23,7 +23,7 @@ install_requires = [
 setup(
     # metadata
     name="pyjojo",
-    version="0.7",
+    version="0.8",
     author="Anthony Tarola",
     author_email="anthony.tarola@gmail.com",
     description="Expose a set of shell scripts as an API.",
@@ -35,7 +35,7 @@ setup(
     
     entry_points={
         'console_scripts': [
-            'pyjojo = pyjojo.util:main'
+            'pyjojo = pyjojo.server:main'
         ]
     },
     
