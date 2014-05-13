@@ -203,6 +203,7 @@ def create_script(script_name, filename):
                 continue
 
             filtered_params.append(value)
+            continue
         
         # lock
         if in_block and key == "lock":
