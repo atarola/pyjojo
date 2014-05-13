@@ -23,7 +23,7 @@ install_requires = [
 setup(
     # metadata
     name="pyjojo",
-    version="0.6",
+    version="0.7",
     author="Anthony Tarola",
     author_email="anthony.tarola@gmail.com",
     description="Expose a set of shell scripts as an API.",
