@@ -116,18 +116,18 @@ class ScriptCollectionHandler(BaseHandler):
 @route(r"/scripts/([\w\-]+)/?")
 class ScriptDetailsHandler(BaseHandler):
     
-    def get(self, script_name):
+    def options(self, script_name):
         """ get the requirements for this script """
         
-        script = self.get_script(script_name)
+        script = self.get_script(script_name, 'options')
         self.finish({'script': script.metadata()})
     
     @asynchronous
     @gen.engine
-    def post(self, script_name):
+    def get(self, script_name):
         """ run the script """
                 
-        script = self.get_script(script_name)
+        script = self.get_script(script_name, 'get')
         retcode, stdout, stderr = yield gen.Task(script.execute, self.params)
         
         self.finish({
@@ -136,11 +136,59 @@ class ScriptDetailsHandler(BaseHandler):
             "retcode": retcode
         })
         
-    def get_script(self, script_name):
+    @asynchronous
+    @gen.engine
+    def delete(self, script_name):
+        """ run the script """
+                
+        script = self.get_script(script_name, 'delete')
+        retcode, stdout, stderr = yield gen.Task(script.execute, self.params)
+        
+        self.finish({
+            "stdout": stdout,
+            "stderr": stderr,
+            "retcode": retcode
+        })
+        
+    @asynchronous
+    @gen.engine
+    def put(self, script_name):
+        """ run the script """
+                
+        script = self.get_script(script_name, 'put')
+        retcode, stdout, stderr = yield gen.Task(script.execute, self.params)
+        
+        self.finish({
+            "stdout": stdout,
+            "stderr": stderr,
+            "retcode": retcode
+        })
+        
+    @asynchronous
+    @gen.engine
+    def post(self, script_name):
+        """ run the script """
+                
+        script = self.get_script(script_name, 'post')
+        retcode, stdout, stderr = yield gen.Task(script.execute, self.params)
+        
+        self.finish({
+            "stdout": stdout,
+            "stderr": stderr,
+            "retcode": retcode
+        })
+        
+    def get_script(self, script_name, http_method):
         script = self.settings['scripts'].get(script_name, None)
         
         if script is None:
             raise HTTPError(404, "Script with name '{0}' not found".format(script_name))
+
+        if http_method == 'options':
+            return script
+
+        if script.http_method != http_method:
+            raise HTTPError(405, "Wrong HTTP method for script '{0}'. Use '{1}'".format(script_name, script.http_method.upper()))
 
         return script
 
