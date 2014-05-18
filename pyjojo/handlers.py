@@ -128,12 +128,20 @@ class ScriptDetailsHandler(BaseHandler):
         """ run the script """
                 
         script = self.get_script(script_name, 'get')
-        retcode, stdout = yield gen.Task(script.execute, self.params)
-        
-        self.finish({
-            "stdout": stdout,
-            "retcode": retcode
-        })
+
+        if script.output == 'combined':
+            retcode, stdout = yield gen.Task(script.execute, self.params)
+            self.finish({
+                "stdout": stdout,
+                "retcode": retcode
+            })
+        else:
+            retcode, stdout, stderr = yield gen.Task(script.execute, self.params)
+            self.finish({
+                "stdout": stdout,
+                "stderr": stderr,
+                "retcode": retcode
+            })
         
     @asynchronous
     @gen.engine
@@ -141,12 +149,20 @@ class ScriptDetailsHandler(BaseHandler):
         """ run the script """
                 
         script = self.get_script(script_name, 'delete')
-        retcode, stdout = yield gen.Task(script.execute, self.params)
-        
-        self.finish({
-            "stdout": stdout,
-            "retcode": retcode
-        })
+
+        if script.output == 'combined':
+            retcode, stdout = yield gen.Task(script.execute, self.params)
+            self.finish({
+                "stdout": stdout,
+                "retcode": retcode
+            })
+        else:
+            retcode, stdout, stderr = yield gen.Task(script.execute, self.params)
+            self.finish({
+                "stdout": stdout,
+                "stderr": stderr,
+                "retcode": retcode
+            })
         
     @asynchronous
     @gen.engine
@@ -154,12 +170,20 @@ class ScriptDetailsHandler(BaseHandler):
         """ run the script """
                 
         script = self.get_script(script_name, 'put')
-        retcode, stdout = yield gen.Task(script.execute, self.params)
-        
-        self.finish({
-            "stdout": stdout,
-            "retcode": retcode
-        })
+
+        if script.output == 'combined':
+            retcode, stdout = yield gen.Task(script.execute, self.params)
+            self.finish({
+                "stdout": stdout,
+                "retcode": retcode
+            })
+        else:
+            retcode, stdout, stderr = yield gen.Task(script.execute, self.params)
+            self.finish({
+                "stdout": stdout,
+                "stderr": stderr,
+                "retcode": retcode
+            })
         
     @asynchronous
     @gen.engine
@@ -167,12 +191,20 @@ class ScriptDetailsHandler(BaseHandler):
         """ run the script """
                 
         script = self.get_script(script_name, 'post')
-        retcode, stdout = yield gen.Task(script.execute, self.params)
-        
-        self.finish({
-            "stdout": stdout,
-            "retcode": retcode
-        })
+
+        if script.output == 'combined':
+            retcode, stdout = yield gen.Task(script.execute, self.params)
+            self.finish({
+                "stdout": stdout,
+                "retcode": retcode
+            })
+        else:
+            retcode, stdout, stderr = yield gen.Task(script.execute, self.params)
+            self.finish({
+                "stdout": stdout,
+                "stderr": stderr,
+                "retcode": retcode
+            })
         
     def get_script(self, script_name, http_method):
         script = self.settings['scripts'].get(script_name, None)
