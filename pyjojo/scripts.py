@@ -4,6 +4,7 @@ import logging
 import os
 import os.path
 import re
+import subprocess
 
 from tornado import gen
 from tornado.process import Subprocess
@@ -71,17 +72,16 @@ class Script(object):
                 self.filename,
                 env=env,
                 stdout=Subprocess.STREAM,
-                stderr=Subprocess.STREAM,
+                stderr=subprocess.STDOUT,
                 io_loop=IOLoop.instance()
             )
     
-        retcode, stdout, stderr = yield [
+        retcode, stdout = yield [
             gen.Task(child.set_exit_callback),
-            gen.Task(child.stdout.read_until_close),
-            gen.Task(child.stderr.read_until_close)
+            gen.Task(child.stdout.read_until_close)
         ]
         
-        callback((child.returncode, stdout, stderr))
+        callback((child.returncode, stdout.split()))
 
     def create_env(self, input):
         output = {}
