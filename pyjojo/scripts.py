@@ -33,13 +33,14 @@ class ScriptCollection(dict):
 class Script(object):
     """ a single script in the directory """
     
-    def __init__(self, filename, name, description, params, filtered_params, needs_lock):
+    def __init__(self, filename, name, description, params, filtered_params, tags, needs_lock):
         self.lock = toro.Lock()
         self.filename = filename
         self.name = name
         self.description = description
         self.params = params
         self.filtered_params = filtered_params
+        self.tags = tags
         self.needs_lock = needs_lock
 
     def filter_params(self, params):
@@ -98,6 +99,7 @@ class Script(object):
             "description": self.description,
             "params": self.params,
             "filtered_params": self.filtered_params,
+            "tags": self.tags,
             "lock": self.needs_lock
         }
         
@@ -138,6 +140,7 @@ def create_script(script_name, filename):
     description = None
     params = []
     filtered_params = []
+    tags = []
     lock = False
     
     # warn the user if we can't execute this file
@@ -204,6 +207,17 @@ def create_script(script_name, filename):
 
             filtered_params.append(value)
             continue
+
+        # tags
+        if in_block and key == "tags":
+            tag_values = [tag_value.strip() for tag_value in value.split(',')]
+            if len(tag_values) > 1:
+                for tag_value in tag_values:
+                    tags.append(tag_value)
+                continue
+
+            tags.append(value)
+            continue
         
         # lock
         if in_block and key == "lock":
@@ -217,4 +231,4 @@ def create_script(script_name, filename):
         log.error("file with filename {0} is missing an end block, Ignoring".format(filename))
         return None
     
-    return Script(filename, script_name, description, params, filtered_params, lock)
+    return Script(filename, script_name, description, params, filtered_params, tags, lock)

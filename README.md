@@ -76,6 +76,7 @@ Example block:
     # param: secret1 - sensitive text you don't want logged
     # param: secret2 - more sensitive stuff
     # filtered_params: secret1, secret2
+    # tags: test, staging
     # lock: false
     # -- jojo -- 
 
@@ -87,6 +88,8 @@ Fields:
     - format: param: *name* [- *description*]
   - **filtered_params**: specifies a list of parameters that you have already specified, but want to ensure that the values are not logged.
     - format: filtered_params: item1 [,item2]
+  - **tags**: specifies a list of tags that you want displayed when querying pyjojo about scripts.
+    - format: tags: item1 [,item2]
   - **lock**: if true, only one instance of the script will be allowed to run
     - format: lock: True|False
     
