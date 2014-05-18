@@ -132,7 +132,13 @@ Fields:
 
 Returns information about all the scripts.
 
-    OPTIONS /scripts
+    GET /scripts
+
+### Script Names List
+
+Returns list of names of all scripts
+
+    GET /script_names
 
 ### Get Information about a Script
 

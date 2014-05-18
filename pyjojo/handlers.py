@@ -104,6 +104,15 @@ class BaseHandler(RequestHandler):
         })
 
 
+@route(r"/script_names/?")
+class ScriptNamesCollectionHandler(BaseHandler):
+    
+    def get(self):
+        """ get the requirements for all of the scripts """
+       
+        self.finish({'script_names': self.settings['scripts'].name()})
+
+
 @route(r"/scripts/?")
 class ScriptCollectionHandler(BaseHandler):
     

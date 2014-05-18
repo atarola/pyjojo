@@ -30,6 +30,16 @@ class ScriptCollection(dict):
         
         return output
 
+    def name(self):
+        """ return a list of just the names of all scripts """
+
+        output = []
+
+        for key, value in self.items():
+            output.append(value.name)
+
+        return output
+
 
 class Script(object):
     """ a single script in the directory """
@@ -123,7 +133,7 @@ class Script(object):
             "output": self.output,
             "lock": self.needs_lock
         }
-        
+
     def __repr__(self):
         return "<{0} {1}>".format(self.__class__.__name__, self.metadata())
 
