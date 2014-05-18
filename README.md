@@ -10,6 +10,12 @@ Output is now split on newlines and is an Array.
 
 Output can now be combined via the 'output' jojo block argument.  Default is 'split'.
 
+# Other Recent Changes
+
+You now have the ability to generate named return values.  Pyjojo will look for lines that contain 'jojo_return_value key=value'.  These will show up in the output in a dictionary.
+
+*Note*: return values MUST show up in stdout
+
 ## Tutorial
 
 Create a directory to store the bash scripts, by default pyJoJo will be pointed at /srv/pyjojo.
@@ -26,6 +32,8 @@ In /srv/pyjojo/echo.sh:
     # -- jojo --
 
     echo "echo'd text: $TEXT"
+    echo "jojo_return_value name=bob"
+    echo "jojo_return_value age=99"
     exit 0
 
 Make sure this script is both readable and executable by the user pyJoJo is running under.  Scripts will be executed through the shell, so make sure you have a valid shebang line.
@@ -39,6 +47,10 @@ You should see this as a response:
 
     {
       "retcode": 0,
+      "return_values": {
+          "age": "99", 
+          "name": "bob"
+      },
       "stderr": [],
       "stdout": [
           "echo'd text: hello world!"

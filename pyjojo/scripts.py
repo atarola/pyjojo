@@ -99,7 +99,7 @@ class Script(object):
                 gen.Task(child.stderr.read_until_close)
             ]
             
-            callback((child.returncode, stdout.split(), stderr.split()))
+            callback((child.returncode, stdout.splitlines(), stderr.splitlines()))
 
     def create_env(self, input):
         output = {}
