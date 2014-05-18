@@ -6,6 +6,8 @@ Expose a directory of bash scripts as an API.
 
 Pyjojo now supports the use of alternative HTTP methods (defined in your script).  To support this, we changed the previous GET calls to OPTIONS calls.
 
+Output of stderr and stdout has now been combined into stdout.  Output is now split on newlines and is an Array.
+
 ## Tutorial
 
 Create a directory to store the bash scripts, by default pyJoJo will be pointed at /srv/pyjojo.
@@ -35,8 +37,9 @@ You should see this as a response:
 
     {
       "retcode": 0, 
-      "stderr": "", 
-      "stdout": "echo'd text: hello world!\n"
+      "stdout": [
+          "echo'd text: hello world!"
+      ]
     }
 
 ## Usage
