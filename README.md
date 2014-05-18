@@ -16,6 +16,8 @@ You now have the ability to generate named return values.  Pyjojo will look for 
 
 *Note*: return values MUST show up in stdout
 
+Added the ability to start pyjojo with --force-json.  Should only be used if you absolutely must; i.e. you're using a 3rd party application that will not set the "Content-Type: application/json" header properly.
+
 ## Tutorial
 
 Create a directory to store the bash scripts, by default pyJoJo will be pointed at /srv/pyjojo.
@@ -73,6 +75,7 @@ You should see this as a response:
       -h, --help            show this help message and exit
       -d, --debug           Start the application in debugging mode.
       --dir=DIRECTORY       Base directory to parse the scripts out of
+      --force-json          Treats all calls as if they sent the 'Content-Type: application/json' header.  May produce unexpected results
       -p PORT, --port=PORT  Set the port to listen to on startup.
       -a ADDRESS, --address=ADDRESS
                             Set the address to listen to on startup. Can be a

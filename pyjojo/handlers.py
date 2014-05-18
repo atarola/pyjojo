@@ -31,7 +31,7 @@ class BaseHandler(RequestHandler):
         self.params = {}
         content_type = self.request.headers.get("Content-Type", 'application/json')
             
-        if content_type.startswith("application/json"):
+        if (content_type.startswith("application/json")) or (config['force_json']):
             if self.request.body in [None, ""]:
                 return
 
@@ -126,7 +126,10 @@ class ScriptDetailsHandler(BaseHandler):
     @gen.engine
     def get(self, script_name):
         """ run the script """
-                
+        
+        if config['force_json']:
+            self.set_header("Content-Type", "application/json; charset=UTF-8")
+
         script = self.get_script(script_name, 'get')
 
         if script.output == 'combined':
@@ -150,6 +153,9 @@ class ScriptDetailsHandler(BaseHandler):
     def delete(self, script_name):
         """ run the script """
                 
+        if config['force_json']:
+            self.set_header("Content-Type", "application/json; charset=UTF-8")
+
         script = self.get_script(script_name, 'delete')
 
         if script.output == 'combined':
@@ -173,6 +179,9 @@ class ScriptDetailsHandler(BaseHandler):
     def put(self, script_name):
         """ run the script """
                 
+        if config['force_json']:
+            self.set_header("Content-Type", "application/json; charset=UTF-8")
+
         script = self.get_script(script_name, 'put')
 
         if script.output == 'combined':
@@ -196,6 +205,9 @@ class ScriptDetailsHandler(BaseHandler):
     def post(self, script_name):
         """ run the script """
                 
+        if config['force_json']:
+            self.set_header("Content-Type", "application/json; charset=UTF-8")
+
         script = self.get_script(script_name, 'post')
 
         if script.output == 'combined':

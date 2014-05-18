@@ -26,6 +26,9 @@ recognises."""
     parser.add_option('--dir', action="store", dest="directory", default="/srv/pyjojo",
                       help="Base directory to parse the scripts out of")
     
+    parser.add_option('--force-json', action="store_true", dest="force_json", default=False,
+                      help="Force the application to treat all incoming requests as 'Content-Type: application/json'")
+    
     parser.add_option('-p', '--port', action="store", dest="port", default=3000,
                       help="Set the port to listen to on startup.")
     
@@ -50,6 +53,7 @@ recognises."""
         config['passfile'] = None
         
     config['directory'] = options.directory
+    config['force_json'] = options.force_json
 
     return options
 
