@@ -134,11 +134,29 @@ Returns information about all the scripts.
 
     GET /scripts
 
+Optional Tag Query Parameters:
+ - format: ?param=tag1,tag2
+ - only one param type may be used per query.
+ - params available
+   - tags: only those scripts which match *ALL* tags will be returned
+   - not_tags: only those scripts which do no have *ANY* of the tags will be returned
+   - any_tags: scripts that match *ANY* tags will be returned
+
+
 ### Script Names List
 
 Returns list of names of all scripts
 
     GET /script_names
+
+Optional Tag Query Parameters:
+ - format: ?param=tag1,tag2
+ - only one param type may be used per query.
+ - params available
+   - tags: only those scripts which match *ALL* tags will be returned
+   - not_tags: only those scripts which do no have *ANY* of the tags will be returned
+   - any_tags: scripts that match *ANY* tags will be returned
+
 
 ### Get Information about a Script
 

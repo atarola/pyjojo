@@ -109,8 +109,17 @@ class ScriptNamesCollectionHandler(BaseHandler):
     
     def get(self):
         """ get the requirements for all of the scripts """
+
+        tags = {'tags': [], 'not_tags': [], 'any_tags': []}
+
+        for tag_arg in ['tags', 'not_tags', 'any_tags']:
+            try:
+                tags[tag_arg] = self.get_arguments(tag_arg)[0].split(',')
+                break
+            except IndexError:
+                continue
        
-        self.finish({'script_names': self.settings['scripts'].name()})
+        self.finish({'script_names': self.settings['scripts'].name(tags)})
 
 
 @route(r"/scripts/?")
@@ -119,7 +128,16 @@ class ScriptCollectionHandler(BaseHandler):
     def get(self):
         """ get the requirements for all of the scripts """
        
-        self.finish({'scripts': self.settings['scripts'].metadata()})
+        tags = {'tags': [], 'not_tags': [], 'any_tags': []}
+
+        for tag_arg in ['tags', 'not_tags', 'any_tags']:
+            try:
+                tags[tag_arg] = self.get_arguments(tag_arg)[0].split(',')
+                break
+            except IndexError:
+                continue
+
+        self.finish({'scripts': self.settings['scripts'].metadata(tags)})
 
 
 @route(r"/scripts/([\w\-]+)/?")

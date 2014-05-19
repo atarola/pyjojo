@@ -20,23 +20,54 @@ class ScriptCollection(dict):
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
         
-    def metadata(self):
+    def metadata(self, tags):
         """ return the metadata for all of the scripts, keyed by name """
         
         output = {}
         
         for key, value in self.items():
-            output[key] = value.metadata()
+
+            if (tags['tags']) or (tags['not_tags']) or (tags['any_tags']):
+                if (set(tags['tags']).issubset(value.tags)) and (tags['tags']):
+                    output[key] = value.metadata()
+                    continue
+                if tags['not_tags']:
+                    output[key] = value.metadata()
+                    for tag in tags['not_tags']:
+                        if (tag in value.tags):
+                            output.pop(key,None)
+                            break
+                for tag in tags['any_tags']:
+                    if tag in value.tags:
+                        output[key] = value.metadata()
+                        break
+            else:
+                output[key] = value.metadata()
         
         return output
 
-    def name(self):
+    def name(self, tags):
         """ return a list of just the names of all scripts """
 
         output = []
 
         for key, value in self.items():
-            output.append(value.name)
+            if (tags['tags']) or (tags['not_tags']) or (tags['any_tags']):
+                if (set(tags['tags']).issubset(value.tags)) and (tags['tags']):
+                    output.append(value.name)
+                    continue
+                if tags['not_tags']:
+                    output.append(value.name)
+                    for tag in tags['not_tags']:
+                        if (tag in value.tags):
+                            output.remove(value.name)
+                            break
+                for tag in tags['any_tags']:
+                    if tag in value.tags:
+                        output.append(value.name)
+                        break
+            else:
+                output.append(value.name)
 
         return output
 
