@@ -133,6 +133,7 @@ class ScriptDetailsHandler(BaseHandler):
             retcode, stdout = yield gen.Task(script.execute, self.params)
             self.finish({
                 "stdout": stdout,
+                "return_values": self.find_return_values(stdout),
                 "retcode": retcode
             })
         else:
@@ -140,6 +141,7 @@ class ScriptDetailsHandler(BaseHandler):
             self.finish({
                 "stdout": stdout,
                 "stderr": stderr,
+                "return_values": self.find_return_values(stdout),
                 "retcode": retcode
             })
         
@@ -154,6 +156,7 @@ class ScriptDetailsHandler(BaseHandler):
             retcode, stdout = yield gen.Task(script.execute, self.params)
             self.finish({
                 "stdout": stdout,
+                "return_values": self.find_return_values(stdout),
                 "retcode": retcode
             })
         else:
@@ -161,6 +164,7 @@ class ScriptDetailsHandler(BaseHandler):
             self.finish({
                 "stdout": stdout,
                 "stderr": stderr,
+                "return_values": self.find_return_values(stdout),
                 "retcode": retcode
             })
         
@@ -175,13 +179,15 @@ class ScriptDetailsHandler(BaseHandler):
             retcode, stdout = yield gen.Task(script.execute, self.params)
             self.finish({
                 "stdout": stdout,
-                "retcode": retcode
+                "return_values": self.find_return_values(stdout),
+                "retcode": retcode,
             })
         else:
             retcode, stdout, stderr = yield gen.Task(script.execute, self.params)
             self.finish({
                 "stdout": stdout,
                 "stderr": stderr,
+                "return_values": self.find_return_values(stdout),
                 "retcode": retcode
             })
         
@@ -196,6 +202,7 @@ class ScriptDetailsHandler(BaseHandler):
             retcode, stdout = yield gen.Task(script.execute, self.params)
             self.finish({
                 "stdout": stdout,
+                "return_values": self.find_return_values(stdout),
                 "retcode": retcode
             })
         else:
@@ -203,6 +210,7 @@ class ScriptDetailsHandler(BaseHandler):
             self.finish({
                 "stdout": stdout,
                 "stderr": stderr,
+                "return_values": self.find_return_values(stdout),
                 "retcode": retcode
             })
         
@@ -219,6 +227,18 @@ class ScriptDetailsHandler(BaseHandler):
             raise HTTPError(405, "Wrong HTTP method for script '{0}'. Use '{1}'".format(script_name, script.http_method.upper()))
 
         return script
+
+    def find_return_values(self, output):
+        """ parse output array for return values """
+
+        return_values = {}
+        for line in output:
+            if line.startswith('jojo_return_value'):
+                temp = line.replace("jojo_return_value","").strip()
+                key, value = [item.strip() for item in temp.split('=')]
+                return_values[key] = value
+
+        return return_values
 
 
 @route(r"/reload/?")
