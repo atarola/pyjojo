@@ -6,6 +6,10 @@ Expose a directory of bash scripts as an API.
 
 Pyjojo now supports the use of alternative HTTP methods (defined in your script).  To support this, we changed the previous GET calls to OPTIONS calls.
 
+Output is now split on newlines and is an Array.
+
+Output can now be combined via the 'output' jojo block argument.  Default is 'split'.
+
 ## Tutorial
 
 Create a directory to store the bash scripts, by default pyJoJo will be pointed at /srv/pyjojo.
@@ -34,9 +38,11 @@ Now, start up pyJoJo and hit it with curl:
 You should see this as a response:
 
     {
-      "retcode": 0, 
-      "stderr": "", 
-      "stdout": "echo'd text: hello world!\n"
+      "retcode": 0,
+      "stderr": [],
+      "stdout": [
+          "echo'd text: hello world!"
+      ]
     }
 
 ## Usage
@@ -81,8 +87,8 @@ Example block:
     # param: secret2 - more sensitive stuff
     # filtered_params: secret1, secret2
     # tags: test, staging
-    # http_method: get|post|put|delete
-    # lock: false
+    # http_method: get
+    # lock: False
     # -- jojo -- 
 
 Fields:
@@ -95,10 +101,17 @@ Fields:
     - format: filtered_params: item1 [,item2]
   - **tags**: specifies a list of tags that you want displayed when querying pyjojo about scripts.
     - format: tags: item1 [,item2]
-  - **http_method**: specifies the http method the script should respond to.  Default is POST
-    - format: http_method: get|post|put|delete
+  - **http_method**: specifies the http method the script should respond to.
+    - format: http_method: get
+    - allowed_values: get|put|post|delete
+    - default: post
+  - **output**: specifies if the output should be 'split' into stderr and stdout or 'combined' into stdout.
+    - format: output: combined
+    - allowed_values: split|combined
+    - default: split
   - **lock**: if true, only one instance of the script will be allowed to run
-    - format: lock: True|False
+    - format: lock: True
+    - default: False
     
 ### Script List
 

@@ -4,6 +4,7 @@ import logging
 import os
 import os.path
 import re
+import subprocess
 
 from tornado import gen
 from tornado.process import Subprocess
@@ -33,7 +34,7 @@ class ScriptCollection(dict):
 class Script(object):
     """ a single script in the directory """
     
-    def __init__(self, filename, name, description, params, filtered_params, tags, http_method, needs_lock):
+    def __init__(self, filename, name, description, params, filtered_params, tags, http_method, output, needs_lock):
         self.lock = toro.Lock()
         self.filename = filename
         self.name = name
@@ -43,6 +44,7 @@ class Script(object):
         self.tags = tags
         self.http_method = http_method
         self.needs_lock = needs_lock
+        self.output = output
 
     def filter_params(self, params):
         filtered_params = dict(params)
@@ -66,22 +68,38 @@ class Script(object):
     @gen.engine
     def do_execute(self, params, callback):
         env = self.create_env(params)
-                
-        child = Subprocess(
-                self.filename,
-                env=env,
-                stdout=Subprocess.STREAM,
-                stderr=Subprocess.STREAM,
-                io_loop=IOLoop.instance()
-            )
-    
-        retcode, stdout, stderr = yield [
-            gen.Task(child.set_exit_callback),
-            gen.Task(child.stdout.read_until_close),
-            gen.Task(child.stderr.read_until_close)
-        ]
         
-        callback((child.returncode, stdout, stderr))
+        if self.output == 'combined':
+            child = Subprocess(
+                    self.filename,
+                    env=env,
+                    stdout=Subprocess.STREAM,
+                    stderr=subprocess.STDOUT,
+                    io_loop=IOLoop.instance()
+                )
+        
+            retcode, stdout = yield [
+                gen.Task(child.set_exit_callback),
+                gen.Task(child.stdout.read_until_close)
+            ]
+            
+            callback((child.returncode, stdout.split()))
+        else:
+            child = Subprocess(
+                    self.filename,
+                    env=env,
+                    stdout=Subprocess.STREAM,
+                    stderr=Subprocess.STREAM,
+                    io_loop=IOLoop.instance()
+                )
+        
+            retcode, stdout, stderr = yield [
+                gen.Task(child.set_exit_callback),
+                gen.Task(child.stdout.read_until_close),
+                gen.Task(child.stderr.read_until_close)
+            ]
+            
+            callback((child.returncode, stdout.split(), stderr.split()))
 
     def create_env(self, input):
         output = {}
@@ -102,6 +120,7 @@ class Script(object):
             "params": self.params,
             "filtered_params": self.filtered_params,
             "tags": self.tags,
+            "output": self.output,
             "lock": self.needs_lock
         }
         
@@ -144,6 +163,7 @@ def create_script(script_name, filename):
     filtered_params = []
     tags = []
     http_method = 'post'
+    output = 'split'
     lock = False
     
     # warn the user if we can't execute this file
@@ -191,8 +211,21 @@ def create_script(script_name, filename):
         
         # http_method
         if in_block and key == "http_method":
-            http_method = value.lower()
-            continue
+            if value.lower() in ['get','post','put','delete']:
+                http_method = value.lower()
+                continue
+            else:
+                log.warn("unrecognized http_method type in jojo block: {0}".format(value.lower()))
+                continue
+        
+        # output
+        if in_block and key == "output":
+            if value.lower() in ['split','combined']:
+                output = value.lower()
+                continue
+            else:
+                log.warn("unrecognized output type in jojo block: {0}".format(value.lower()))
+                continue
         
         # param
         if in_block and key == "param":
@@ -239,4 +272,4 @@ def create_script(script_name, filename):
         log.error("file with filename {0} is missing an end block, Ignoring".format(filename))
         return None
     
-    return Script(filename, script_name, description, params, filtered_params, tags, http_method, lock)
+    return Script(filename, script_name, description, params, filtered_params, tags, http_method, output, lock)
