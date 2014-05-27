@@ -21,6 +21,10 @@ def main():
     log.info("Setting up the application")
     application = create_application(options.debug)
 
+    # warn about --force-json
+    if options.force_json:
+        log.warn("Application started with '--force-json' option.  All calls will be treated as if they passed the 'Content-Type: application/json' header.  This may cause unexpected behavior.")
+
     # server startup
     if options.unix_socket:
         unix_socket_server(application, options)
