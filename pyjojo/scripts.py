@@ -33,7 +33,7 @@ class ScriptCollection(dict):
 class Script(object):
     """ a single script in the directory """
     
-    def __init__(self, filename, name, description, params, filtered_params, tags, needs_lock):
+    def __init__(self, filename, name, description, params, filtered_params, tags, http_method, needs_lock):
         self.lock = toro.Lock()
         self.filename = filename
         self.name = name
@@ -41,6 +41,7 @@ class Script(object):
         self.params = params
         self.filtered_params = filtered_params
         self.tags = tags
+        self.http_method = http_method
         self.needs_lock = needs_lock
 
     def filter_params(self, params):
@@ -95,6 +96,7 @@ class Script(object):
     def metadata(self):
         return {
             "filename": self.filename,
+            "http_method": self.http_method,
             "name": self.name,
             "description": self.description,
             "params": self.params,
@@ -141,6 +143,7 @@ def create_script(script_name, filename):
     params = []
     filtered_params = []
     tags = []
+    http_method = 'post'
     lock = False
     
     # warn the user if we can't execute this file
@@ -184,6 +187,11 @@ def create_script(script_name, filename):
         # description
         if in_block and key == "description":
             description = value
+            continue
+        
+        # http_method
+        if in_block and key == "http_method":
+            http_method = value.lower()
             continue
         
         # param
@@ -231,4 +239,4 @@ def create_script(script_name, filename):
         log.error("file with filename {0} is missing an end block, Ignoring".format(filename))
         return None
     
-    return Script(filename, script_name, description, params, filtered_params, tags, lock)
+    return Script(filename, script_name, description, params, filtered_params, tags, http_method, lock)

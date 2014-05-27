@@ -2,6 +2,10 @@
 
 Expose a directory of bash scripts as an API.
 
+# Recent Breaking Changes!
+
+Pyjojo now supports the use of alternative HTTP methods (defined in your script).  To support this, we changed the previous GET calls to OPTIONS calls.
+
 ## Tutorial
 
 Create a directory to store the bash scripts, by default pyJoJo will be pointed at /srv/pyjojo.
@@ -77,6 +81,7 @@ Example block:
     # param: secret2 - more sensitive stuff
     # filtered_params: secret1, secret2
     # tags: test, staging
+    # http_method: get|post|put|delete
     # lock: false
     # -- jojo -- 
 
@@ -90,6 +95,8 @@ Fields:
     - format: filtered_params: item1 [,item2]
   - **tags**: specifies a list of tags that you want displayed when querying pyjojo about scripts.
     - format: tags: item1 [,item2]
+  - **http_method**: specifies the http method the script should respond to.  Default is POST
+    - format: http_method: get|post|put|delete
   - **lock**: if true, only one instance of the script will be allowed to run
     - format: lock: True|False
     
@@ -97,13 +104,13 @@ Fields:
 
 Returns information about all the scripts.
 
-    GET /scripts
+    OPTIONS /scripts
 
 ### Get Information about a Script
 
 Returns information about the specified script.
 
-    GET /scripts/{script_name}
+    OPTIONS /scripts/{script_name}
 
 ### Run a Script
 
