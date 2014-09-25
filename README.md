@@ -2,21 +2,11 @@
 
 Expose a directory of bash scripts as an API.
 
-# Recent Breaking Changes!
+**Note:** This application gives you plenty of bullets to shoot yourself in the 
+foot!  Please use the SSL config options, give a password file, and either 
+whitelist access to it via a firewall or keep it on a private network.
 
-Pyjojo now supports the use of alternative HTTP methods (defined in your script).  To support this, we changed the previous GET calls to OPTIONS calls.
-
-Output is now split on newlines and is an Array.
-
-Output can now be combined via the 'output' jojo block argument.  Default is 'split'.
-
-# Other Recent Changes
-
-You now have the ability to generate named return values.  Pyjojo will look for lines that contain 'jojo_return_value key=value'.  These will show up in the output in a dictionary.
-
-*Note*: return values MUST show up in stdout
-
-Added the ability to start pyjojo with --force-json.  Should only be used if you absolutely must; i.e. you're using a 3rd party application that will not set the "Content-Type: application/json" header properly.
+Use the apache htpasswd utility to create your htpasswd files.
 
 ## Tutorial
 

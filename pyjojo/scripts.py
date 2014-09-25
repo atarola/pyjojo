@@ -3,6 +3,7 @@
 import logging
 import os
 import os.path
+import pipes
 import re
 import subprocess
 
@@ -147,8 +148,9 @@ class Script(object):
         
         # add all the parameters as env variables
         for param in self.params:
-            name = param['name']
-            output[name.upper()] = input.get(name, '')
+            name = param['name'].upper()
+            value = input.get(name, '')
+            output[name] = pipes.quote(value)
         
         return output
 

@@ -16,9 +16,7 @@ Note: This application gives you plenty of bullets to shoot yourself in the
 foot!  Please use the SSL config options, give a password file, and either 
 whitelist access to it via a firewall or keep it in a private network.
 
-You can use the apache htpasswd utility to create your htpasswd files.  If
-you do, I recommend passing the -d flag, forcing the encryption type pyjojo
-recognises."""
+Use the apache htpasswd utility to create your htpasswd files."""
     
     parser.add_option('-d', '--debug', action="store_true", dest="debug", default=False,
                       help="Start the application in debugging mode.")
