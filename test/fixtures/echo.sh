@@ -5,5 +5,5 @@
 # param: text - text to echo
 # -- jojo --
 
-echo "echo'd text: $TEXT"
+echo 'echod text:' + $TEXT
 exit 0

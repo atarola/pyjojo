@@ -148,9 +148,9 @@ class Script(object):
         
         # add all the parameters as env variables
         for param in self.params:
-            name = param['name'].upper()
+            name = param['name']
             value = input.get(name, '')
-            output[name] = pipes.quote(value)
+            output[name.upper()] = pipes.quote(pipes.quote(value))
         
         return output
 
